@@ -9,7 +9,10 @@ self.addEventListener("push", (e) => {
 });
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
-  const url = (e.notification.data && e.notification.data.url) || self.registration.scope;
+  let url = (e.notification.data && e.notification.data.url) || self.registration.scope;
+  // Multidespacho: los avisos del servidor todavía pueden traer la dirección de la app de Carvajal & Rivera;
+  // en esta web siempre se abre ESTA app (el portal de clientes, /cliente/, no se toca).
+  if (/\/dc-gestion-juridica-(movil|web)\/(#.*)?$/.test(url)) url = self.registration.scope + (url.includes("#") ? url.slice(url.indexOf("#")) : "");
   e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((ventanas) => {
     for (const v of ventanas) if (v.url.split("#")[0] === url.split("#")[0] && "focus" in v) { v.navigate && v.navigate(url); return v.focus(); }
     return self.clients.openWindow(url);
