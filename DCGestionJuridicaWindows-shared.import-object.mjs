@@ -1,7 +1,7 @@
 
 import * as Li9za2lrby5tanM from './skiko.mjs';
 import * as QGpzLWpvZGEvY29yZQ from './js-joda.esm.js';
-import * as d2FzbTpqcy1zdHJpbmc from './DCGestionJuridicaWindows-shared.js-builtins.mjs?v=1795080900';
+import * as d2FzbTpqcy1zdHJpbmc from './DCGestionJuridicaWindows-shared.js-builtins.mjs?v=1795099400';
 
 const wasmJsTag = WebAssembly.JSTag;
 const wasmTag = wasmJsTag ?? new WebAssembly.Tag({ parameters: ['externref'] });
