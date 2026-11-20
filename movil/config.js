@@ -4,4 +4,4 @@ window.DC_CONFIG = {
   url: "https://okvxxppudwbcldxpxyfw.supabase.co",
   clavePublica: "sb_publishable_oDR8SiWeo1owprP7to2azQ_S30AT_8Y"
 };
-window.DC_VERSION = "1.7.43";
+window.DC_VERSION = "1.7.44";
