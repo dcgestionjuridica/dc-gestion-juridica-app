@@ -1,6 +1,6 @@
 {
-  "name": "Mi proceso · DC Gestión Jurídica",
-  "short_name": "Mi proceso",
+  "name": "Mi Proceso",
+  "short_name": "Mi Proceso",
   "description": "Portal de clientes: estado del proceso, cuotas y pagos.",
   "lang": "es",
   "start_url": "./",

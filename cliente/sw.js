@@ -1,6 +1,6 @@
 // Portal del cliente: guarda la página (no los datos) para que abra rápido y se pueda instalar en el celular.
 // Siempre intenta primero internet; los datos nunca se guardan aquí.
-const CACHE = "dc-portal-v1";
+const CACHE = "dc-portal-v2";
 const ARCHIVOS = ["./", "index.html", "cliente.js", "manifest.webmanifest", "estilos.css", "tema.js", "config.js", "logica.js", "clave.js", "intro.js",
   "avisos-push.js", "huella.js", "ajustes.js", "icono-192.png", "icono-512.png", "apple-touch-icon.png", "favicon-32.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARCHIVOS))); self.skipWaiting(); });

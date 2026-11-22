@@ -1,6 +1,6 @@
 {
-  "name": "DC Gestión Jurídica",
-  "short_name": "DC Jurídica",
+  "name": "Móvil",
+  "short_name": "Móvil",
   "description": "Consulta de vencimientos, pendientes, agenda y procesos desde el celular.",
   "lang": "es",
   "start_url": "./",
