@@ -1,10 +1,10 @@
 // Guarda la página (no los datos) para que abra rápido y se pueda instalar en el celular.
 // Siempre intenta primero internet; los datos de Supabase nunca se guardan aquí.
 // Web liviana de los abogados de la app comercial: caché propia (no borra la de otras webs del mismo sitio).
-const CACHE = "dcm-movil-v2";
+const CACHE = "dcm-movil-v3";
 const ARCHIVOS = ["./", "index.html", "estilos.css", "tema.js", "config.js", "logica.js", "clave.js", "app.js", "intro.js", "manifest.webmanifest",
   "icono-192.png", "icono-512.png", "apple-touch-icon.png", "favicon-32.png",
-  "avisos-push.js", "huella.js", "ajustes.js"];
+  "avisos-push.js", "huella.js", "ajustes.js", "voz.js"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARCHIVOS))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith("dcm-movil-") && k !== CACHE).map(k => caches.delete(k)))));

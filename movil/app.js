@@ -7,6 +7,7 @@
   const PORTAL = "https://consultaprocesos.ramajudicial.gov.co/Procesos/NumeroRadicacion";
 
   const sb = window.supabase.createClient(cfg.url, cfg.clavePublica, { auth: { persistSession: true, autoRefreshToken: true } });
+  window.DC_SB = sb; // 25/11/2026: lo usan las órdenes de voz (voz.js) con la misma sesión.
   let datos = null;
   let cargadoEn = 0;
   let vista = "inicio";
@@ -84,6 +85,8 @@
     mostrarEntrada("");
   });
   $("btn-actualizar").addEventListener("click", () => cargar());
+  // Después de agendar o enviar un mensaje por voz, se vuelven a leer los datos.
+  document.addEventListener("dc-voz-cambio", () => { if (datos) cargar(); });
 
   // ---------- Datos ----------
   async function leer(consulta) {
@@ -111,7 +114,7 @@
         sb.rpc("mensajes_clientes_lista_transaccional", { datos: {} }).then(r => (r.error ? [] : (r.data && r.data.filas) || [])),
         // Multidespacho: el nombre de SU despacho (el servidor solo deja ver el propio).
         leer(sb.from("despachos").select("nombre").limit(1))
-      ]).then(r => { const d = r.pop(); nombreDespacho = (d && d[0] && d[0].nombre) || "Su despacho"; return r; });
+      ]).then(r => { const d = r.pop(); nombreDespacho = (d && d[0] && d[0].nombre) || "Su despacho"; window.DC_DESPACHO_NOMBRE = nombreDespacho; return r; });
       // 30/10/2026: el aviso «Movimiento nuevo» se quita solo cuando ya tiene más de 7 días (el proceso sigue en la lista).
       vigilancia.forEach(p => { if (p.pendiente && p.movimiento_en && Date.now() - Date.parse(p.movimiento_en) > 7 * 86400000) p.pendiente = false; });
       const perfil = perfiles[0];
@@ -472,6 +475,33 @@
     const r = ev.target.closest("[data-radicado]");
     if (r && navigator.clipboard) navigator.clipboard.writeText(r.dataset.radicado).catch(() => {});
   });
+  // ---------- Botón o gesto de «atrás» del celular (pedido de Darío) ----------
+  // Atrás cierra lo que esté abierto (Doc Dai, una hoja, Configuración, un chat) o vuelve al Inicio.
+  // En el Inicio avisa «Toque atrás otra vez para salir» y solo un segundo atrás seguido saca al menú del celular.
+  let salirHasta = 0, relojSalir = null;
+  const guarda = () => { try { history.pushState({ dc: "guarda" }, ""); } catch (e) {} };
+  const visible = el => el && el.offsetParent !== null;
+  function avisoSalir() {
+    let t = $("aviso-salir");
+    if (!t) { t = document.createElement("div"); t.id = "aviso-salir"; t.className = "aviso-salir"; t.textContent = "Toque atrás otra vez para salir"; document.body.appendChild(t); }
+    t.classList.remove("ve"); void t.offsetWidth; t.classList.add("ve");
+  }
+  window.addEventListener("popstate", () => {
+    // Fuera de la app (pantalla de entrada o de clave) atrás funciona normal.
+    if ($("app").classList.contains("oculto")) { guarda(); return; }
+    if ($("voz-hoja") && window.DC_VOZ && DC_VOZ.cerrar) { DC_VOZ.cerrar(); guarda(); return; }
+    const hojaNueva = document.querySelector('[data-nuevo="cerrar"]');
+    if (hojaNueva) { hojaNueva.click(); guarda(); return; }
+    const aj = document.querySelector('[data-aj="cerrar"]');
+    if (visible(aj) && window.DCAjustes) { DCAjustes.cerrar(); guarda(); return; }
+    if (vista === "mensajes" && mensajes.abierto) { const v = document.querySelector('[data-msj="volver"]'); if (v) v.click(); guarda(); return; }
+    if (vista !== "inicio" || $("buscar").value) { vista = "inicio"; $("buscar").value = ""; pintar(); window.scrollTo(0, 0); guarda(); return; }
+    // En el Inicio: no se vuelve a poner la guarda, así el segundo atrás (antes de 2 segundos) sale de la app.
+    salirHasta = Date.now() + 2000; avisoSalir();
+    clearTimeout(relojSalir); relojSalir = setTimeout(() => { if (Date.now() >= salirHasta) guarda(); }, 2000);
+  });
+  if (!history.state || history.state.dc !== "guarda") guarda();
+
   // Al volver a la app después de un rato, se actualiza sola.
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible" && datos && !inactivo() && Date.now() - cargadoEn > 120000) cargar();
