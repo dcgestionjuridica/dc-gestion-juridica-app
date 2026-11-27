@@ -932,6 +932,9 @@ const js_code = {
     'com.carvajalrivera.crgestionjuridicawindows.plataforma.ponerRutaJs' : (r) => { if (globalThis.history && globalThis.location && globalThis.location.hash !== r) globalThis.history.replaceState(null, '', globalThis.location.pathname + globalThis.location.search + r); },
     'com.carvajalrivera.crgestionjuridicawindows.plataforma.pantallaEntradaJs' : (si) => { try { if (globalThis.DC_ACT) globalThis.DC_ACT.pantallaEntrada(si); } catch (e) {} },
     'com.carvajalrivera.crgestionjuridicawindows.plataforma.forzarVersionJs' : () => { try { if (globalThis.DC_ACT) globalThis.DC_ACT.forzar(); else globalThis.location.reload(); } catch (e) {} },
+    'com.carvajalrivera.crgestionjuridicawindows.plataforma.escucharAtrasJs' : (alAtras) => { try { window.addEventListener('popstate', () => { alAtras(); }); } catch (e) {} },
+    'com.carvajalrivera.crgestionjuridicawindows.plataforma.ponerGuardaAtrasJs' : () => { try { const h = location.hash === '#/login' ? '#/inicio' : location.hash; history.pushState({ dcAtras: 1 }, '', location.pathname + location.search + h); } catch (e) {} },
+    'com.carvajalrivera.crgestionjuridicawindows.plataforma.salirConAtrasJs' : () => { try { history.back(); } catch (e) {} },
     'com.carvajalrivera.crgestionjuridicawindows.plataforma.punteroGruesoJs' : () => (() => { try { return !!(globalThis.matchMedia && globalThis.matchMedia('(pointer: coarse)').matches); } catch (e) { return false; } })(),
     'com.carvajalrivera.crgestionjuridicawindows.plataforma.abrirVentanaJs' : () => (() => {
             const v = window.open('', '_blank');
